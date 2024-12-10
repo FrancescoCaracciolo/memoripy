@@ -74,13 +74,14 @@ class MemoryStore:
                 self.long_term_memory.append(self.short_term_memory[idx])
                 print(f"Moved interaction {self.short_term_memory[idx]['id']} to long-term memory.")
 
-    def retrieve(self, query_embedding, query_concepts, similarity_threshold=40, exclude_last_n=0):
+    def retrieve(self, query_embedding, query_concepts, similarity_threshold=40, exclude_last_n=0, return_minimum=0):
         if len(self.short_term_memory) == 0:
             print("No interactions available in short-term memory for retrieval.")
             return []
 
         print("Retrieving relevant interactions from short-term memory...")
         relevant_interactions = []
+        non_relevant_interactions = []
         current_time = time.time()
         decay_rate = 0.0001  # Adjust decay rate as needed
 
@@ -126,6 +127,8 @@ class MemoryStore:
                 relevant_interactions.append((adjusted_similarity, self.short_term_memory[idx], self.concepts_list[idx]))
             else:
                 print(f"[DEBUG] Interaction {self.short_term_memory[idx]['id']} was not relevant (similarity: {adjusted_similarity:.2f}%).")
+                # Store non-relevant interactions with their adjusted similarity
+                non_relevant_interactions.append((adjusted_similarity, self.short_term_memory[idx], self.concepts_list[idx]))
 
         # Decrease decay factor for non-relevant interactions
         for idx in range(len(self.short_term_memory)):
@@ -147,6 +150,14 @@ class MemoryStore:
         # Sort interactions based on total_score
         final_interactions.sort(key=lambda x: x[0], reverse=True)
         final_interactions = [interaction for _, interaction in final_interactions]
+
+        # If not enough relevant interactions, add the best non-relevant ones
+        if len(final_interactions) < return_minimum:
+            print(f"Not enough relevant interactions found. Adding the best {return_minimum - len(final_interactions)} non-relevant interactions.")
+            # Sort non-relevant interactions by adjusted similarity
+            non_relevant_interactions.sort(key=lambda x: x[0], reverse=True)
+            # Add the best non-relevant interactions to the final list
+            final_interactions.extend([interaction for _, interaction, _ in non_relevant_interactions[:return_minimum - len(final_interactions)]])
 
         # Retrieve from semantic memory
         semantic_interactions = self.retrieve_from_semantic_memory(query_embedding_norm)

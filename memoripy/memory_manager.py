@@ -92,10 +92,10 @@ class MemoryManager:
         self.memory_store.cluster_interactions()
         print(f"Memory initialized with {len(self.memory_store.short_term_memory)} interactions in short-term and {len(self.memory_store.long_term_memory)} in long-term.")
 
-    def retrieve_relevant_interactions(self, query: str, similarity_threshold=40, exclude_last_n=0) -> list:
+    def retrieve_relevant_interactions(self, query: str, similarity_threshold=40, exclude_last_n=0, return_minimum=0) -> list:
         query_embedding = self.get_embedding(query)
         query_concepts = self.extract_concepts(query)
-        return self.memory_store.retrieve(query_embedding, query_concepts, similarity_threshold, exclude_last_n=exclude_last_n)
+        return self.memory_store.retrieve(query_embedding, query_concepts, similarity_threshold, exclude_last_n=exclude_last_n, return_minimum=return_minimum)
 
     def generate_response(self, prompt: str, last_interactions: list, retrievals: list, context_window=3) -> str:
         context = ""
