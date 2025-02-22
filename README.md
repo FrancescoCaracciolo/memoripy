@@ -1,6 +1,6 @@
 # Memoripy
 
-**Memoripy** is a Python library designed to manage and retrieve context-aware memory interactions using both short-term and long-term storage. It supports AI-driven applications requiring memory management, with compatibility for OpenAI and Ollama APIs. Features include contextual memory retrieval, memory decay and reinforcement, hierarchical clustering, and graph-based associations.
+**Memoripy** is a Python library designed to manage and retrieve context-aware memory interactions using both short-term and long-term storage. It supports AI-driven applications requiring memory management, with compatibility for OpenAI, Azure OpenAI, OpenRouter and Ollama APIs. Features include contextual memory retrieval, memory decay and reinforcement, hierarchical clustering, and graph-based associations.
 
 ## Features
 
@@ -30,9 +30,10 @@ The following example demonstrates how to set up and use Memoripy in a Python sc
 ### Example: `example.py`
 This example script shows the primary functionality of Memoripy, including initialization, storing interactions, retrieving relevant memories, and generating responses.
 
+```
 from memoripy import MemoryManager, JSONStorage
 from memoripy.implemented_models import OpenAIChatModel, OllamaEmbeddingModel
-```
+
 def main():
     # Replace 'your-api-key' with your actual OpenAI API key
     api_key = "your-key"
@@ -130,6 +131,6 @@ Memoripy is licensed under the Apache 2.0 License.
 Contributions are welcome! Feel free to open issues or submit pull requests for improvements.
 
 ## Contributors
-<a href="https://github.com/FrancescoCaracciolo"><img src="https://github.com/FrancescoCaracciolo.png" width="60px" style="border-radius: 50%;" /></a><a href="https://github.com/sjwang05"><img src="https://github.com/sjwang05.png" width="60px" style="border-radius: 50%;" /></a>
+<a href="https://github.com/caspianmoon"><img src="https://avatars.githubusercontent.com/u/128258622?v=4" width="60px" style="border-radius: 50%;" /></a><a href="https://github.com/FrancescoCaracciolo"><img src="https://avatars.githubusercontent.com/u/67018178?v=4" width="60px" style="border-radius: 50%;" /></a><a href="https://github.com/sjwang05"><img src="https://avatars.githubusercontent.com/u/63834813?v=4" width="60px" style="border-radius: 50%;" /></a><a href="https://github.com/virtualramblas"><img src="https://avatars.githubusercontent.com/u/1730182?v=4" width="60px" style="border-radius: 50%;" /></a><a href="https://github.com/robonxt-ai"><img src="https://avatars.githubusercontent.com/u/56778225?v=4" width="60px" style="border-radius: 50%;" /></a><a href="https://github.com/shiro-sata"><img src="https://avatars.githubusercontent.com/u/125814898?v=4" width="60px" style="border-radius: 50%;" /></a>
 
 

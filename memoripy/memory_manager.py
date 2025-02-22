@@ -63,7 +63,7 @@ class MemoryManager:
             "embedding": embedding.tolist(),
             "timestamp": timestamp,
             "access_count": 1,
-            "concepts": list(concepts),
+            "concepts": [str(concept) for concept in concepts], # Prevent the "unhashable type: 'dict'" error
             "decay_factor": 1.0,
         }
         self.memory_store.add_interaction(interaction)

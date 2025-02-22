@@ -1,6 +1,6 @@
 import numpy as np
 import ollama
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_openai import AzureChatOpenAI, AzureOpenAIEmbeddings, ChatOpenAI, OpenAIEmbeddings
 from langchain_ollama import ChatOllama
 from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
@@ -91,6 +91,59 @@ class OllamaChatModel(ChatModel):
             template=(
                 "Please analyze the following text and provide a list of key concepts that are unique to this content. "
                 "Return only the core concepts that best capture the text's meaning.\n"
+                "{format_instructions}\n{text}"
+            ),
+            input_variables=["text"],
+            partial_variables={"format_instructions": self.parser.get_format_instructions()},
+        )
+
+    def invoke(self, messages: list) -> str:
+        response = self.llm.invoke(messages)
+        return str(response.content)
+
+    def extract_concepts(self, text: str) -> list[str]:
+        chain = self.prompt_template | self.llm | self.parser
+        response = chain.invoke({"text": text})
+        concepts = response.get("concepts", [])
+        print(f"Concepts extracted: {concepts}")
+        return concepts
+
+class AzureOpenAIEmbeddingModel(EmbeddingModel):
+    def __init__(self, api_key, api_version, azure_endpoint, model_name="text-embedding-3-small"):
+        self.api_key = api_key
+        self.model_name = model_name
+        self.embeddings_model = AzureOpenAIEmbeddings(model=self.model_name, 
+                                                      api_key=self.api_key,
+                                                      azure_endpoint=azure_endpoint,
+                                                    api_version=api_version)
+
+        if model_name == "text-embedding-3-small":
+            self.dimension = 1536
+        else:
+            raise ValueError("Unsupported OpenAI embedding model name for specified dimension.")
+
+    def get_embedding(self, text: str) -> np.ndarray:
+        embedding = self.embeddings_model.embed_query(text)
+        if embedding is None:
+            raise ValueError("Failed to generate embedding.")
+        return np.array(embedding)
+
+    def initialize_embedding_dimension(self) -> int:
+        return self.dimension
+
+class AzureOpenAIChatModel(ChatModel):
+    def __init__(self, api_key, api_version, azure_endpoint, model_name="gpt-3.5-turbo"):
+        self.api_key = api_key
+        self.model_name = model_name
+        self.llm = AzureChatOpenAI(azure_deployment=self.model_name, 
+                                   api_key=self.api_key,
+                                   azure_endpoint=azure_endpoint,
+                                   api_version=api_version)
+        self.parser = JsonOutputParser(pydantic_object=ConceptExtractionResponse)
+        self.prompt_template = PromptTemplate(
+            template=(
+                "Extract key concepts from the following text in a concise, context-specific manner. "
+                "Include only highly relevant and specific concepts.\n"
                 "{format_instructions}\n{text}"
             ),
             input_variables=["text"],
