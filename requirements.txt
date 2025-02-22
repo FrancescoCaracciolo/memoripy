@@ -8,7 +8,7 @@ black>=24.10.0
 certifi>=2024.8.30
 charset-normalizer>=3.4.0
 distro>=1.9.0
-faiss-cpu>=1.8.0.post1
+faiss-cpu
 frozenlist>=1.5.0
 h11>=0.14.0
 httpcore>=1.0.6
